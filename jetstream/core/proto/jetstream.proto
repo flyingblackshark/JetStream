@@ -63,6 +63,10 @@ message DecodeRequest {
   // Next ID: 8
 }
 
+message SemanticCode {
+    repeated int32 elements = 1;
+}
+
 message DecodeResponse {
   // InitialContent supports returning initial one-off response data from the
   // stream. It's a placeholder for future features such as history cache.
@@ -70,9 +74,9 @@ message DecodeResponse {
   message StreamContent {
     message Sample {
       // The text string decoded from token id(s).
-      string text = 1;
+      // string text = 1;
       // List of token ids, one list per sample. When speculative decoding is disabled, the list size should be 1; When speculative decoding is enabled, the list size should be >= 1.
-      repeated int32 token_ids = 2;
+      repeated SemanticCode token_ids = 1;
     }
     // Supports multiple samples in the StreamContent. The Sample list size depends on text generation strategy the engine used.
     repeated Sample samples = 1;

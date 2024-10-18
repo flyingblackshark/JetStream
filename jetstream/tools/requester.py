@@ -24,7 +24,7 @@ from jetstream.core.proto import jetstream_pb2_grpc
 from jetstream.engine.token_utils import load_vocab
 
 
-_SERVER = flags.DEFINE_string("server", "0.0.0.0", "server address")
+_SERVER = flags.DEFINE_string("server", "35.186.20.86", "server address")
 _PORT = flags.DEFINE_string("port", "9000", "port to ping")
 _TEXT = flags.DEFINE_string("text", "My dog is cute", "The message")
 _MAX_TOKENS = flags.DEFINE_integer(
