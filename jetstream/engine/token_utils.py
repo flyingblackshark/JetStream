@@ -30,6 +30,7 @@ from jetstream.engine import tokenizer_api
 from jetstream.engine import tokenizer_pb2
 from jetstream.third_party.llama3 import llama3_tokenizer
 
+from transformers import AutoTokenzier
 # ResultToken class to store tokens ids.
 ResultTokens = Any
 
@@ -417,3 +418,68 @@ class TikToken(tokenizer_api.Tokenizer):
   def bos_id(self) -> int:
     """ID of the BOS token."""
     return self.tokenizer.bos_id
+
+class FishSpeechTokenizer(tokenizer_api.Tokenizer):
+  """Tokenizer to convert strings to token ids and vice-versa."""
+
+  def __init__(self, metadata: tokenizer_pb2.TokenizerParameters):
+    self.tokenizer = AutoTokenizer.from_pretrained("fishaudio/fish-speech-1")
+
+  def encode(
+      self, s: str, **kwargs
+  ) -> Tuple[Union[jax.Array, np.ndarray], int]:
+    """Tokenize a string.
+    Args:
+        s: String to tokenize.
+        **kwargs: Additional keyword arguments
+    Returns:
+        tokens: Tokenized into integers.
+        true_length: Actual length of the non-padded sequence
+          if padding is used.
+    """
+    is_bos = kwargs.pop("is_bos", True)
+    prefill_lengths = kwargs.pop("prefill_lengths", None)
+    max_prefill_length = kwargs.pop("max_prefill_length", None)
+    jax_padding = kwargs.pop("jax_padding", True)
+
+    tokens = np.array(self.tokenizer.encode(s))
+
+    tokens, true_length = pad_tokens(
+        tokens,
+        self.bos_id,
+        self.pad_id,
+        is_bos=is_bos,
+        prefill_lengths=prefill_lengths,
+        max_prefill_length=max_prefill_length,
+        jax_padding=jax_padding,
+    )
+    return tokens, true_length
+
+  def decode(self, token_ids: list[int]) -> str:
+    """Processess input token ids to generate a string.
+    Args:
+      token_ids: List of token ids.
+    Returns:
+      str: String generated from the token ids.
+    """
+    return self.tokenizer.decode(token_ids)
+
+  @property
+  def stop_tokens(self) -> set[int]:
+    """ID of the stop token."""
+    return self.tokenizer.stop_tokens
+
+  @property
+  def pad_id(self) -> int:
+    """ID of the pad token."""
+    return self.tokenizer.pad_token
+
+  @property
+  def eos_id(self) -> int:
+    """ID of EOS token."""
+    return self.tokenizer.eos_token
+
+  @property
+  def bos_id(self) -> int:
+    """ID of the BOS token."""
+    return self.tokenizer.bos_token

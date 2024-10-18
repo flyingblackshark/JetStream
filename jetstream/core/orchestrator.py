@@ -878,17 +878,17 @@ class LLMOrchestrator(jetstream_pb2_grpc.OrchestratorServicer):
   def _get_prefill_content(
       self, request: jetstream_pb2.DecodeRequest
   ) -> Tuple[str | list[int], bool]:
-    which_content = request.WhichOneof("content")
-    content = getattr(request, which_content)
-    if which_content == "text_content":
-      return cast(jetstream_pb2.DecodeRequest.TextContent, content).text, False
-    else:
-      return (
-          list(
-              cast(jetstream_pb2.DecodeRequest.TokenContent, content).token_ids
-          ),
-          True,
-      )
+    # which_content = request.WhichOneof("content")
+    # content = getattr(request, which_content)
+    # if which_content == "text_content":
+    #   return cast(jetstream_pb2.DecodeRequest.TextContent, content).text, False
+    # else:
+    return (
+        list(
+            jetstream_pb2.DecodeRequest.TokenContent.token_ids
+        ),
+        True,
+    )
 
   def process_client_side_tokenization_response(self, response: Any):
     samples = []
