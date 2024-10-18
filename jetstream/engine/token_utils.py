@@ -30,7 +30,7 @@ from jetstream.engine import tokenizer_api
 from jetstream.engine import tokenizer_pb2
 from jetstream.third_party.llama3 import llama3_tokenizer
 
-from transformers import AutoTokenzier
+from transformers import AutoTokenizer
 # ResultToken class to store tokens ids.
 ResultTokens = Any
 
