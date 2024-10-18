@@ -419,6 +419,7 @@ class TikToken(tokenizer_api.Tokenizer):
     """ID of the BOS token."""
     return self.tokenizer.bos_id
 
+
 class FishSpeechTokenizer(tokenizer_api.Tokenizer):
   """Tokenizer to convert strings to token ids and vice-versa."""
 

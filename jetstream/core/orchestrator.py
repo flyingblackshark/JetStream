@@ -884,9 +884,7 @@ class LLMOrchestrator(jetstream_pb2_grpc.OrchestratorServicer):
     #   return cast(jetstream_pb2.DecodeRequest.TextContent, content).text, False
     # else:
     return (
-        list(
-            jetstream_pb2.DecodeRequest.TokenContent.token_ids
-        ),
+        list(jetstream_pb2.DecodeRequest.TokenContent.token_ids),
         True,
     )
 
