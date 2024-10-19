@@ -54,15 +54,16 @@ message DecodeRequest {
   // Next ID: 8
 }
 
-message SemanticCode {
-    repeated int32 elements = 1;
-}
+
 
 message DecodeResponse {
   // InitialContent supports returning initial one-off response data from the
   // stream. It's a placeholder for future features such as history cache.
   message InitialContent {}
   message StreamContent {
+    message SemanticCode {
+      repeated int32 semantic_ids = 1;
+    }
     message Sample {
       // The text string decoded from token id(s).
       // string text = 1;

@@ -886,9 +886,15 @@ class LLMOrchestrator(jetstream_pb2_grpc.OrchestratorServicer):
   def process_client_side_tokenization_response(self, response: Any):
     samples = []
     for sample in response:
+      semantic_code_arr = []
+      for semantic_code in sample:
+        semantic_code_arr.append(semantic_code)
+      semantic_code = jetstream_pb2.DecodeResponse.StreamContent.SemanticCode(
+          semantic_ids=sample.semantic_code_arr,
+      )
       samples.append(
           jetstream_pb2.DecodeResponse.StreamContent.Sample(
-              token_ids=sample.token_ids,
+              token_ids=semantic_code,
           )
       )
     return jetstream_pb2.DecodeResponse(
@@ -991,27 +997,27 @@ class LLMOrchestrator(jetstream_pb2_grpc.OrchestratorServicer):
     # The DecodeResponse stream should consume all generated tokens in
     # return_channel when complete signal is received (AsyncMultifuture
     # promises this).
-    buffered_response_list = []
+    # buffered_response_list = []
     async for response in active_request.return_channel:
       response = cast(list[ReturnSample], response)
-      if is_client_side_tokenization:
-        # If is_client_side_tokenization, the client should request with token
-        # ids, and the JetStream server will return token ids as response.
-        # The client should take care of tokenization and detokenization.
-        yield self.process_client_side_tokenization_response(response)
-      else:
-        # Buffer response mechanism is used to handle streaming
-        # detokenization with special character (For some edge cases with
-        # SentencePiece tokenizer, it requires to decode a complete sequence
-        # instead of a single token).
-        if self.should_buffer_response(response):
-          buffered_response_list.append(response)
-          continue
-        yield self.process_server_side_tokenization_response(
-            response, buffered_response_list
-        )
-        # Reset buffer after flushed.
-        buffered_response_list = []
+      # if is_client_side_tokenization:
+      # If is_client_side_tokenization, the client should request with token
+      # ids, and the JetStream server will return token ids as response.
+      # The client should take care of tokenization and detokenization.
+      yield self.process_client_side_tokenization_response(response)
+      # else:
+      #   # Buffer response mechanism is used to handle streaming
+      #   # detokenization with special character (For some edge cases with
+      #   # SentencePiece tokenizer, it requires to decode a complete sequence
+      #   # instead of a single token).
+      #   if self.should_buffer_response(response):
+      #     buffered_response_list.append(response)
+      #     continue
+      #   yield self.process_server_side_tokenization_response(
+      #       response, buffered_response_list
+      #   )
+      #   # Reset buffer after flushed.
+      #   buffered_response_list = []
 
   async def HealthCheck(  # pylint: disable=invalid-overridden-method
       self,

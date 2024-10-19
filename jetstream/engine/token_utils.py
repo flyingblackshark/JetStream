@@ -49,6 +49,7 @@ DEFAULT_PREFILL_BUCKETS = [
     32768,
 ]
 
+
 def take_nearest_length(lengths: list[int], length: int) -> int:
   """Gets the nearest length to the right in a set of lengths."""
   pos = bisect_left(lengths, length)
@@ -208,11 +209,13 @@ def process_result_tokens(
   """
   # tokens: [samples, speculations]
   slot_data = result_tokens.get_result_at_slot(slot)
-  slot_tokens = slot_data.tokens
-  slot_valid = slot_data.valid
-  slot_lengths = slot_data.lengths
+  slot_semantics = slot_data.tokens[:, :, 1:]
+  slot_tokens = slot_data.tokens[:, :, 0]
+  slot_valid = slot_data.valid[:, :, 0]
+  slot_lengths = slot_data.lengths[:, 0]
   samples, speculations = slot_tokens.shape
-  stop_tokens = tokenizer.stop_tokens
+  # stop_tokens = tokenizer.stop_tokens
+  stop_tokens = {4}
   # Stop anything which has reached it's max length.
   complete = complete | (slot_lengths > slot_max_length)
   if debug:
@@ -226,6 +229,7 @@ def process_result_tokens(
   for idx in range(samples):
     text_so_far = []
     tok_id_so_far = []
+    semantics_tok_id_so_far = []
     if not complete[idx].item():
       for spec_idx in range(speculations):
         tok_id = slot_tokens[idx, spec_idx].item()
@@ -241,14 +245,15 @@ def process_result_tokens(
           complete[idx] = True
           break
         else:
-          if not is_client_side_tokenization:
-            if isinstance(tokenizer, SentencePieceTokenizer):
-              text_so_far.append(tokenizer.decode([tok_id], is_streaming=True))
-            else:
-              text_so_far.append(tokenizer.decode([tok_id]))
+          # if not is_client_side_tokenization:
+          #   if isinstance(tokenizer, SentencePieceTokenizer):
+          #     text_so_far.append(tokenizer.decode([tok_id], is_streaming=True))
+          #   else:
+          #     text_so_far.append(tokenizer.decode([tok_id]))
           tok_id_so_far.append(tok_id)
+          semantics_tok_id_so_far.append(slot_semantics[idx, spec_idx])
     return_samples.append(
-        ReturnSample(text=text_so_far, token_ids=tok_id_so_far)
+        ReturnSample(text=text_so_far, token_ids=semantics_tok_id_so_far)
     )
     if debug:
       logging.info("Return samples %s", str(return_samples))
