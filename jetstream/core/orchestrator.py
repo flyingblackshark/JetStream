@@ -888,9 +888,11 @@ class LLMOrchestrator(jetstream_pb2_grpc.OrchestratorServicer):
     for sample in response:
       semantic_code_arr = []
       for semantic_code in sample.token_ids:
-        semantic_code_arr.append(jetstream_pb2.DecodeResponse.StreamContent.SemanticCode(
-            semantic_ids=semantic_code,
-        ))
+        semantic_code_arr.append(
+            jetstream_pb2.DecodeResponse.StreamContent.SemanticCode(
+                semantic_ids=semantic_code,
+            )
+        )
       samples.append(
           jetstream_pb2.DecodeResponse.StreamContent.Sample(
               token_ids=semantic_code_arr,
@@ -953,7 +955,7 @@ class LLMOrchestrator(jetstream_pb2_grpc.OrchestratorServicer):
           "LLM orchestrator is being used in offline test mode, and will not"
           " respond to gRPC queries - only direct function calls."
       )
-    is_client_side_tokenization = False
+    is_client_side_tokenization = True
     return_channel = async_multifuture.AsyncMultifuture()
     if context:
       context.add_done_callback(return_channel.cancel)
