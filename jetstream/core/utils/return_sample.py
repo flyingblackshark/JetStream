@@ -16,4 +16,4 @@ class ReturnSample:
   """
 
   text: list[str]
-  token_ids: list[int]
+  token_ids: list[list[int]]
