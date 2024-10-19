@@ -36,20 +36,11 @@ message DecodeRequest {
   // input/prefill of a sequence.
   int32 max_tokens = 4;
 
-  //message TextContent {
-  //  string text = 1;
-  //}
   message TokenContent {
     repeated int32 token_ids = 1;
   }
 
-  // The client can pass the inputs either as a string, in which case the server will
-  // tokenize it, or as tokens, in which case it's the client's responsibility to
-  // ensure they tokenize its input strings with the correct tokenizer.
-  //message content {
-  //  TextContent text_content = 5;
-  //  TokenContent token_content = 6;
-  //}
+  TokenContent token_content = 6;
 
   message Metadata {
     float start_time = 1;

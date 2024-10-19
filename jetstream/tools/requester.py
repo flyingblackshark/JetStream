@@ -21,10 +21,10 @@ from absl import flags
 import grpc
 from jetstream.core.proto import jetstream_pb2
 from jetstream.core.proto import jetstream_pb2_grpc
-from jetstream.engine.token_utils import load_vocab
+# from jetstream.engine.token_utils import load_vocab
 
 
-_SERVER = flags.DEFINE_string("server", "35.186.20.86", "server address")
+_SERVER = flags.DEFINE_string("server", "35.186.80.90", "server address")
 _PORT = flags.DEFINE_string("port", "9000", "port to ping")
 _TEXT = flags.DEFINE_string("text", "My dog is cute", "The message")
 _MAX_TOKENS = flags.DEFINE_integer(
@@ -36,11 +36,11 @@ _TOKENIZER = flags.DEFINE_string(
     "Name or path of the tokenizer (matched to the model)",
     required=True,
 )
-_CLIENT_SIDE_TOKENIZATION = flags.DEFINE_bool(
-    "client_side_tokenization",
-    False,
-    "Enable client side tokenization with tokenizer.",
-)
+# _CLIENT_SIDE_TOKENIZATION = flags.DEFINE_bool(
+#     "client_side_tokenization",
+#     False,
+#     "Enable client side tokenization with tokenizer.",
+# )
 
 
 def _GetResponseAsync(
@@ -52,17 +52,20 @@ def _GetResponseAsync(
   response = stub.Decode(request)
   output = []
   for resp in response:
-    if _CLIENT_SIDE_TOKENIZATION.value:
-      output.extend(resp.stream_content.samples[0].token_ids)
-    else:
-      output.extend(resp.stream_content.samples[0].text)
-  if _CLIENT_SIDE_TOKENIZATION.value:
-    vocab = load_vocab(_TOKENIZER.value)
-    text_output = vocab.tokenizer.decode(output)
-  else:
-    text_output = "".join(output)
+    # if _CLIENT_SIDE_TOKENIZATION.value:
+    output.extend(resp.stream_content.samples[0].token_ids)
+    # else:
+    #   output.extend(resp.stream_content.samples[0].text)
+  # if _CLIENT_SIDE_TOKENIZATION.value:
+  # vocab = load_vocab(_TOKENIZER.value)
+  # text_output = vocab.tokenizer.decode(output)
+  # else:
+  #   text_output = "".join(output)
   print(f"Prompt: {_TEXT.value}")
-  print(f"Response: {text_output}")
+  # print(f"Response: {text_output}")
+
+
+from transformers import AutoTokenizer
 
 
 def main(argv: Sequence[str]) -> None:
@@ -74,22 +77,24 @@ def main(argv: Sequence[str]) -> None:
     grpc.channel_ready_future(channel).result()
     stub = jetstream_pb2_grpc.OrchestratorStub(channel)
     print(f"Sending request to: {address}")
-    if _CLIENT_SIDE_TOKENIZATION.value:
-      vocab = load_vocab(_TOKENIZER.value)
-      token_ids = vocab.tokenizer.encode(_TEXT.value)
-      request = jetstream_pb2.DecodeRequest(
-          token_content=jetstream_pb2.DecodeRequest.TokenContent(
-              token_ids=token_ids
-          ),
-          max_tokens=_MAX_TOKENS.value,
-      )
-    else:
-      request = jetstream_pb2.DecodeRequest(
-          text_content=jetstream_pb2.DecodeRequest.TextContent(
-              text=_TEXT.value
-          ),
-          max_tokens=_MAX_TOKENS.value,
-      )
+    # if _CLIENT_SIDE_TOKENIZATION.value:
+    # vocab = load_vocab(_TOKENIZER.value)
+    # token_ids = vocab.tokenizer.encode(_TEXT.value)
+    tokenizer = AutoTokenizer.from_pretrained("fishaudio/fish-speech-1")
+    token_ids = tokenizer.encode(_TEXT.value)
+    request = jetstream_pb2.DecodeRequest(
+        token_content=jetstream_pb2.DecodeRequest.TokenContent(
+            token_ids=token_ids
+        ),
+        max_tokens=_MAX_TOKENS.value,
+    )
+    # else:
+    #   request = jetstream_pb2.DecodeRequest(
+    #       text_content=jetstream_pb2.DecodeRequest.TextContent(
+    #           text=_TEXT.value
+    #       ),
+    #       max_tokens=_MAX_TOKENS.value,
+    #   )
     return _GetResponseAsync(stub, request)
 
 

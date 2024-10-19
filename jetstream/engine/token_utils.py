@@ -34,21 +34,6 @@ from transformers import AutoTokenizer
 # ResultToken class to store tokens ids.
 ResultTokens = Any
 
-DEFAULT_PREFILL_BUCKETS = [
-    16,
-    32,
-    64,
-    128,
-    256,
-    512,
-    1024,
-    2048,
-    4096,
-    8192,
-    16384,
-    32768,
-]
-
 
 def take_nearest_length(lengths: list[int], length: int) -> int:
   """Gets the nearest length to the right in a set of lengths."""
@@ -124,27 +109,61 @@ def pad_tokens(
     tokens: Tokenized into integers.
     true_length: Actual length of the non-padded sequence.
   """
+  # string_prefix = "<|im_start|>user\n"
+  # string_suffix = "<|im_end|><|im_start|>assistant\n"
+  # encoded_prefix = tokenizer.encode(
+  #     string_prefix,
+  #     add_special_tokens=False,
+  #     max_length=10**6,
+  #     truncation=False,
+  # )
+
+  # encoded_suffix = tokenizer.encode(
+  #     string_suffix,
+  #     add_special_tokens=False,
+  #     max_length=10**6,
+  #     truncation=False,
+  # )
+  tokens_prefix = [2, 91, 89, 75, 88, 205]
+  tokens_suffix = [4, 2, 71, 89, 89, 79, 89, 90, 71, 84, 90, 205]
+  encoded = tokens_prefix + np.asarray(tokens).tolist() + tokens_suffix
+  tokens = np.asarray(encoded)
+
   if prefill_lengths is None:
-    prefill_lengths = DEFAULT_PREFILL_BUCKETS
+    prefill_lengths = [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024,
+        2048,
+        4096,
+        8192,
+        16384,
+        32768,
+    ]
   if max_prefill_length is not None:
     prefill_lengths = prefill_lengths[
         : prefill_lengths.index(max_prefill_length)
     ] + [
         max_prefill_length,
     ]
+
   # Add a beginning of sequence token if this is the beginning.
-  if is_bos:
-    tokens = np.concatenate(
-        [
-            np.array(
-                [
-                    bos_id,
-                ]
-            ),
-            tokens,
-        ],
-        axis=-1,
-    )
+  # if is_bos:
+  #   tokens = np.concatenate(
+  #       [
+  #           np.array(
+  #               [
+  #                   bos_id,
+  #               ]
+  #           ),
+  #           tokens,
+  #       ],
+  #       axis=-1,
+  #   )
   true_length = tokens.shape[-1]
   padded_length = take_nearest_length(prefill_lengths, true_length)
   padding = padded_length - true_length
@@ -154,8 +173,10 @@ def pad_tokens(
     padded_tokens = tokens[-padded_length:]
   else:
     padded_tokens = np.pad(tokens, (0, padding), constant_values=(pad_id,))
-  if jax_padding:
-    padded_tokens = jnp.array(padded_tokens)
+  # if jax_padding:
+  padded_tokens = jnp.array(padded_tokens)[:, jnp.newaxis]
+  codebook_dim = 9
+  padded_tokens = jnp.pad(padded_tokens, ((0, 0), (0, codebook_dim)))
   return padded_tokens, true_length
 
 
@@ -217,7 +238,6 @@ def process_result_tokens(
           )
         if tok_id in stop_tokens or not valid:
           complete[idx] = True
-          tok_id_so_far.append(tok_id)
           break
         else:
           if not is_client_side_tokenization:
