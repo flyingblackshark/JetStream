@@ -879,7 +879,7 @@ class LLMOrchestrator(jetstream_pb2_grpc.OrchestratorServicer):
       self, request: jetstream_pb2.DecodeRequest
   ) -> Tuple[str | list[int], bool]:
     return (
-        list(jetstream_pb2.DecodeRequest.token_content.token_ids),
+        list(request.token_content.token_ids),
         True,
     )
 
