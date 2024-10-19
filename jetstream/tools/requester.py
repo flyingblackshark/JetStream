@@ -21,8 +21,12 @@ from absl import flags
 import grpc
 from jetstream.core.proto import jetstream_pb2
 from jetstream.core.proto import jetstream_pb2_grpc
+import jax.numpy as jnp
+import jax
+import dac_jax
+import soundfile as sf
+from functools import partial
 # from jetstream.engine.token_utils import load_vocab
-
 
 _SERVER = flags.DEFINE_string("server", "35.186.132.71", "server address")
 _PORT = flags.DEFINE_string("port", "9000", "port to ping")
@@ -30,16 +34,16 @@ _TEXT = flags.DEFINE_string("text", "My dog is cute", "The message")
 _MAX_TOKENS = flags.DEFINE_integer(
     "max_tokens", 3, "Maximum number of output/decode tokens of a sequence"
 )
-_TOKENIZER = flags.DEFINE_string(
-    "tokenizer",
-    None,
-    "Name or path of the tokenizer (matched to the model)",
-    required=True,
-)
+# _TOKENIZER = flags.DEFINE_string(
+#     "tokenizer",
+#     None,
+#     "Name or path of the tokenizer (matched to the model)",
+#     required=True,
+# )
 # _CLIENT_SIDE_TOKENIZATION = flags.DEFINE_bool(
 #     "client_side_tokenization",
 #     False,
-#     "Enable client side tokenization with tokenizer.",
+#     "Enable client side tokenization with tokenizer.",  
 # )
 
 
@@ -51,18 +55,43 @@ def _GetResponseAsync(
 
   response = stub.Decode(request)
   output = []
+  codes_arr = []
   for resp in response:
     # if _CLIENT_SIDE_TOKENIZATION.value:
-    output.extend(resp.stream_content.samples[0].token_ids.semantic_ids)
+    test = resp.stream_content.samples[0].token_ids
+    #print(test)
+    output.append(resp.stream_content.samples[0].token_ids)
+    if len(list(test)) > 0:
+      codes_arr.append(list(test)[0].semantic_ids)
+
     # else:
     #   output.extend(resp.stream_content.samples[0].text)
+  # for i in range(len(output)):
+  #   test = 
+  #   codes_arr.append()
+  codes = jnp.asarray(codes_arr)
+  model, variables = dac_jax.load_model(model_type="44khz")
+  @partial(jax.jit, static_argnums=(1, 2))
+  def decode_from_codes(codes: jnp.ndarray, scale, length: int = None):
+      recons = model.apply(
+          variables,
+          codes,
+          scale,
+          length,
+          method="decode",
+      )
+      return recons
+  audio_output = decode_from_codes(jnp.expand_dims(codes.transpose(1,0),0),None).squeeze((0,1) )
+  sf.write("test.wav",audio_output,samplerate=44100)
+  
   # if _CLIENT_SIDE_TOKENIZATION.value:
   # vocab = load_vocab(_TOKENIZER.value)
   # text_output = vocab.tokenizer.decode(output)
   # else:
   #   text_output = "".join(output)
-  print(f"Prompt: {_TEXT.value}")
-  print(f"Response: {output}")
+  # print(f"Prompt: {_TEXT.value}")
+  # print(f"Response: {output}")
+  
 
 
 from transformers import AutoTokenizer
