@@ -911,38 +911,38 @@ class LLMOrchestrator(jetstream_pb2_grpc.OrchestratorServicer):
         # decode more bytes to compose the string.
         return True
 
-  def process_server_side_tokenization_response(
-      self, response: Any, buffered_response_list
-  ):
-    # Flush the buffered responses to each sample of current response.
-    current_response_with_flushed_buffer = list(
-        zip(*buffered_response_list, response)
-    )
-    # Empty buffer: [[s0_cur], [s1_cur], ...]
-    # Has buffer:
-    # [[s0_b0, s0_b1, ..., s0_cur], [s1_b0, s1_b1, ..., s1_cur], ...]
-    current_response_with_flushed_buffer = cast(
-        list[list[ReturnSample]], current_response_with_flushed_buffer
-    )
-    # Form correct sample(s) and return as StreamContent for this iteration.
-    samples = []
-    for sample in current_response_with_flushed_buffer:
-      text = []
-      token_ids = []
-      for resp in sample:
-        text.extend(resp.text)
-        token_ids.extend(resp.token_ids)
-      samples.append(
-          jetstream_pb2.DecodeResponse.StreamContent.Sample(
-              text=token_utils.text_tokens_to_str(text),
-              token_ids=token_ids,
-          )
-      )
-    return jetstream_pb2.DecodeResponse(
-        stream_content=jetstream_pb2.DecodeResponse.StreamContent(
-            samples=samples
-        )
-    )
+  # def process_server_side_tokenization_response(
+  #     self, response: Any, buffered_response_list
+  # ):
+  #   # Flush the buffered responses to each sample of current response.
+  #   current_response_with_flushed_buffer = list(
+  #       zip(*buffered_response_list, response)
+  #   )
+  #   # Empty buffer: [[s0_cur], [s1_cur], ...]
+  #   # Has buffer:
+  #   # [[s0_b0, s0_b1, ..., s0_cur], [s1_b0, s1_b1, ..., s1_cur], ...]
+  #   current_response_with_flushed_buffer = cast(
+  #       list[list[ReturnSample]], current_response_with_flushed_buffer
+  #   )
+  #   # Form correct sample(s) and return as StreamContent for this iteration.
+  #   samples = []
+  #   for sample in current_response_with_flushed_buffer:
+  #     text = []
+  #     token_ids = []
+  #     for resp in sample:
+  #       text.extend(resp.text)
+  #       token_ids.extend(resp.token_ids)
+  #     samples.append(
+  #         jetstream_pb2.DecodeResponse.StreamContent.Sample(
+  #             text=token_utils.text_tokens_to_str(text),
+  #             token_ids=token_ids,
+  #         )
+  #     )
+  #   return jetstream_pb2.DecodeResponse(
+  #       stream_content=jetstream_pb2.DecodeResponse.StreamContent(
+  #           samples=samples
+  #       )
+  #   )
 
   async def Decode(  # pylint: disable=invalid-overridden-method
       self,
