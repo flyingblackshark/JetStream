@@ -889,7 +889,7 @@ class LLMOrchestrator(jetstream_pb2_grpc.OrchestratorServicer):
       semantic_code_arr = []
       for semantic_code in sample.token_ids:
         semantic_code_arr.append(
-            jetstream_pb2.DecodeResponse.StreamContent.SemanticCode(
+            jetstream_pb2.DecodeResponse.StreamContent.Sample.SemanticCode(
                 semantic_ids=semantic_code,
             )
         )
