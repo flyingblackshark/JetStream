@@ -1,6 +1,6 @@
 PYTHON := python
 PIP := $(PYTHON) -m pip
-GRPC_TOOLS_VERSION := 1.62.1
+GRPC_TOOLS_VERSION := 1.48.2
 
 all: install-deps generate-protos format check
 

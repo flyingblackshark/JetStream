@@ -904,12 +904,12 @@ class LLMOrchestrator(jetstream_pb2_grpc.OrchestratorServicer):
         )
     )
 
-  def should_buffer_response(self, response: Any) -> bool:
-    for item in response:
-      if item.text and token_utils.is_byte_token(item.text[-1]):
-        # If any sample ends in bytes, this means we might still need to
-        # decode more bytes to compose the string.
-        return True
+  # def should_buffer_response(self, response: Any) -> bool:
+  #   for item in response:
+  #     if item.text and token_utils.is_byte_token(item.text[-1]):
+  #       # If any sample ends in bytes, this means we might still need to
+  #       # decode more bytes to compose the string.
+  #       return True
 
   # def process_server_side_tokenization_response(
   #     self, response: Any, buffered_response_list

@@ -61,11 +61,10 @@ message DecodeResponse {
   // stream. It's a placeholder for future features such as history cache.
   message InitialContent {}
   message StreamContent {
-    message SemanticCode {
-      repeated int32 semantic_ids = 1;
-    }
     message Sample {
-      // The text string decoded from token id(s).
+      message SemanticCode {
+        repeated int32 semantic_ids = 1;
+      }
       // List of token ids, one list per sample. When speculative decoding is disabled, the list size should be 1; When speculative decoding is enabled, the list size should be >= 1.
       repeated SemanticCode token_ids = 1;
     }
