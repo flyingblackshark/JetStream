@@ -15,5 +15,5 @@ class ReturnSample:
     token_ids: Raw result token id(s).
   """
 
-  text: list[str]
+  #text: list[str]
   token_ids: list[list[int]]
