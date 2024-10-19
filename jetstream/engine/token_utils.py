@@ -34,6 +34,20 @@ from transformers import AutoTokenizer
 # ResultToken class to store tokens ids.
 ResultTokens = Any
 
+DEFAULT_PREFILL_BUCKETS = [
+    16,
+    32,
+    64,
+    128,
+    256,
+    512,
+    1024,
+    2048,
+    4096,
+    8192,
+    16384,
+    32768,
+]
 
 def take_nearest_length(lengths: list[int], length: int) -> int:
   """Gets the nearest length to the right in a set of lengths."""
@@ -130,20 +144,7 @@ def pad_tokens(
   tokens = np.asarray(encoded)
 
   if prefill_lengths is None:
-    prefill_lengths = [
-        16,
-        32,
-        64,
-        128,
-        256,
-        512,
-        1024,
-        2048,
-        4096,
-        8192,
-        16384,
-        32768,
-    ]
+    prefill_lengths = DEFAULT_PREFILL_BUCKETS
   if max_prefill_length is not None:
     prefill_lengths = prefill_lengths[
         : prefill_lengths.index(max_prefill_length)
