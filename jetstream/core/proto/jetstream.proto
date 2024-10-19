@@ -65,8 +65,9 @@ message DecodeResponse {
       message SemanticCode {
         repeated int32 semantic_ids = 1;
       }
+      string text = 1;
       // List of token ids, one list per sample. When speculative decoding is disabled, the list size should be 1; When speculative decoding is enabled, the list size should be >= 1.
-      repeated SemanticCode token_ids = 1;
+      repeated SemanticCode token_ids = 2;
     }
     // Supports multiple samples in the StreamContent. The Sample list size depends on text generation strategy the engine used.
     repeated Sample samples = 1;

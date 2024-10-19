@@ -26,7 +26,7 @@ _sym_db = _symbol_database.Default()
 
 
 DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(
-    b'\n$jetstream/core/proto/jetstream.proto\x12\x0fjetstream_proto"\x8e\x02\n\rDecodeRequest\x12\x12\n\nmax_tokens\x18\x04 \x01(\x05\x12\x42\n\rtoken_content\x18\x06 \x01(\x0b\x32+.jetstream_proto.DecodeRequest.TokenContent\x12;\n\x08metadata\x18\x07 \x01(\x0b\x32\'.jetstream_proto.DecodeRequest.MetadataH\x00\x1a!\n\x0cTokenContent\x12\x11\n\ttoken_ids\x18\x01 \x03(\x05\x1a\x1e\n\x08Metadata\x12\x12\n\nstart_time\x18\x01 \x01(\x02\x42\x13\n\x11metadata_optionalJ\x04\x08\x01\x10\x02J\x04\x08\x02\x10\x03J\x04\x08\x03\x10\x04"\xa7\x03\n\x0e\x44\x65\x63odeResponse\x12I\n\x0finitial_content\x18\x02 \x01(\x0b\x32..jetstream_proto.DecodeResponse.InitialContentH\x00\x12G\n\x0estream_content\x18\x03 \x01(\x0b\x32-.jetstream_proto.DecodeResponse.StreamContentH\x00\x1a\x10\n\x0eInitialContent\x1a\xdd\x01\n\rStreamContent\x12\x45\n\x07samples\x18\x01 \x03(\x0b\x32\x34.jetstream_proto.DecodeResponse.StreamContent.Sample\x1a\x84\x01\n\x06Sample\x12T\n\ttoken_ids\x18\x01 \x03(\x0b\x32\x41.jetstream_proto.DecodeResponse.StreamContent.Sample.SemanticCode\x1a$\n\x0cSemanticCode\x12\x14\n\x0csemantic_ids\x18\x01 \x03(\x05\x42\t\n\x07\x63ontentJ\x04\x08\x01\x10\x02"\x14\n\x12HealthCheckRequest"&\n\x13HealthCheckResponse\x12\x0f\n\x07is_live\x18\x01 \x01(\x08\x32\xb9\x01\n\x0cOrchestrator\x12M\n\x06\x44\x65\x63ode\x12\x1e.jetstream_proto.DecodeRequest\x1a\x1f.jetstream_proto.DecodeResponse"\x00\x30\x01\x12Z\n\x0bHealthCheck\x12#.jetstream_proto.HealthCheckRequest\x1a$.jetstream_proto.HealthCheckResponse"\x00\x62\x06proto3'
+    b'\n$jetstream/core/proto/jetstream.proto\x12\x0fjetstream_proto"\x8e\x02\n\rDecodeRequest\x12\x12\n\nmax_tokens\x18\x04 \x01(\x05\x12\x42\n\rtoken_content\x18\x06 \x01(\x0b\x32+.jetstream_proto.DecodeRequest.TokenContent\x12;\n\x08metadata\x18\x07 \x01(\x0b\x32\'.jetstream_proto.DecodeRequest.MetadataH\x00\x1a!\n\x0cTokenContent\x12\x11\n\ttoken_ids\x18\x01 \x03(\x05\x1a\x1e\n\x08Metadata\x12\x12\n\nstart_time\x18\x01 \x01(\x02\x42\x13\n\x11metadata_optionalJ\x04\x08\x01\x10\x02J\x04\x08\x02\x10\x03J\x04\x08\x03\x10\x04"\xb5\x03\n\x0e\x44\x65\x63odeResponse\x12I\n\x0finitial_content\x18\x02 \x01(\x0b\x32..jetstream_proto.DecodeResponse.InitialContentH\x00\x12G\n\x0estream_content\x18\x03 \x01(\x0b\x32-.jetstream_proto.DecodeResponse.StreamContentH\x00\x1a\x10\n\x0eInitialContent\x1a\xeb\x01\n\rStreamContent\x12\x45\n\x07samples\x18\x01 \x03(\x0b\x32\x34.jetstream_proto.DecodeResponse.StreamContent.Sample\x1a\x92\x01\n\x06Sample\x12\x0c\n\x04text\x18\x01 \x01(\t\x12T\n\ttoken_ids\x18\x02 \x03(\x0b\x32\x41.jetstream_proto.DecodeResponse.StreamContent.Sample.SemanticCode\x1a$\n\x0cSemanticCode\x12\x14\n\x0csemantic_ids\x18\x01 \x03(\x05\x42\t\n\x07\x63ontentJ\x04\x08\x01\x10\x02"\x14\n\x12HealthCheckRequest"&\n\x13HealthCheckResponse\x12\x0f\n\x07is_live\x18\x01 \x01(\x08\x32\xb9\x01\n\x0cOrchestrator\x12M\n\x06\x44\x65\x63ode\x12\x1e.jetstream_proto.DecodeRequest\x1a\x1f.jetstream_proto.DecodeResponse"\x00\x30\x01\x12Z\n\x0bHealthCheck\x12#.jetstream_proto.HealthCheckRequest\x1a$.jetstream_proto.HealthCheckResponse"\x00\x62\x06proto3'
 )
 
 
@@ -165,19 +165,19 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _DECODEREQUEST_METADATA._serialized_start = 259
   _DECODEREQUEST_METADATA._serialized_end = 289
   _DECODERESPONSE._serialized_start = 331
-  _DECODERESPONSE._serialized_end = 754
+  _DECODERESPONSE._serialized_end = 768
   _DECODERESPONSE_INITIALCONTENT._serialized_start = 497
   _DECODERESPONSE_INITIALCONTENT._serialized_end = 513
   _DECODERESPONSE_STREAMCONTENT._serialized_start = 516
-  _DECODERESPONSE_STREAMCONTENT._serialized_end = 737
+  _DECODERESPONSE_STREAMCONTENT._serialized_end = 751
   _DECODERESPONSE_STREAMCONTENT_SAMPLE._serialized_start = 605
-  _DECODERESPONSE_STREAMCONTENT_SAMPLE._serialized_end = 737
-  _DECODERESPONSE_STREAMCONTENT_SAMPLE_SEMANTICCODE._serialized_start = 701
-  _DECODERESPONSE_STREAMCONTENT_SAMPLE_SEMANTICCODE._serialized_end = 737
-  _HEALTHCHECKREQUEST._serialized_start = 756
-  _HEALTHCHECKREQUEST._serialized_end = 776
-  _HEALTHCHECKRESPONSE._serialized_start = 778
-  _HEALTHCHECKRESPONSE._serialized_end = 816
-  _ORCHESTRATOR._serialized_start = 819
-  _ORCHESTRATOR._serialized_end = 1004
+  _DECODERESPONSE_STREAMCONTENT_SAMPLE._serialized_end = 751
+  _DECODERESPONSE_STREAMCONTENT_SAMPLE_SEMANTICCODE._serialized_start = 715
+  _DECODERESPONSE_STREAMCONTENT_SAMPLE_SEMANTICCODE._serialized_end = 751
+  _HEALTHCHECKREQUEST._serialized_start = 770
+  _HEALTHCHECKREQUEST._serialized_end = 790
+  _HEALTHCHECKRESPONSE._serialized_start = 792
+  _HEALTHCHECKRESPONSE._serialized_end = 830
+  _ORCHESTRATOR._serialized_start = 833
+  _ORCHESTRATOR._serialized_end = 1018
 # @@protoc_insertion_point(module_scope)
