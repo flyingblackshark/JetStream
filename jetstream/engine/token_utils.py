@@ -173,11 +173,11 @@ def pad_tokens(
     # Take the last N tokens if we have too many.
     padded_tokens = tokens[-padded_length:]
   else:
-    padded_tokens = np.pad(tokens, (0, padding), constant_values=(pad_id,))
+    padded_tokens = np.pad(tokens, (0, padding))
   # if jax_padding:
-  padded_tokens = jnp.array(padded_tokens)[:, jnp.newaxis]
+  padded_tokens = np.array(padded_tokens)[:, np.newaxis]
   codebook_dim = 9
-  padded_tokens = jnp.pad(padded_tokens, ((0, 0), (0, codebook_dim)))
+  padded_tokens = np.pad(padded_tokens, ((0, 0), (0, codebook_dim)))
   return padded_tokens, true_length
 
 
