@@ -53,7 +53,7 @@ def _GetResponseAsync(
   output = []
   for resp in response:
     # if _CLIENT_SIDE_TOKENIZATION.value:
-    output.extend(resp.stream_content.samples[0].token_ids)
+    output.extend(resp.stream_content.samples[0].token_ids.semantic_ids)
     # else:
     #   output.extend(resp.stream_content.samples[0].text)
   # if _CLIENT_SIDE_TOKENIZATION.value:
@@ -62,7 +62,7 @@ def _GetResponseAsync(
   # else:
   #   text_output = "".join(output)
   print(f"Prompt: {_TEXT.value}")
-  # print(f"Response: {text_output}")
+  print(f"Response: {output}")
 
 
 from transformers import AutoTokenizer

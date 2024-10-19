@@ -227,7 +227,7 @@ def process_result_tokens(
     )
   return_samples = []
   for idx in range(samples):
-    #text_so_far = []
+    # text_so_far = []
     tok_id_so_far = []
     semantics_tok_id_so_far = []
     if not complete[idx].item():
@@ -252,9 +252,7 @@ def process_result_tokens(
           #     text_so_far.append(tokenizer.decode([tok_id]))
           tok_id_so_far.append(tok_id)
           semantics_tok_id_so_far.append(slot_semantics[idx, spec_idx])
-    return_samples.append(
-        ReturnSample(token_ids=semantics_tok_id_so_far)
-    )
+    return_samples.append(ReturnSample(token_ids=semantics_tok_id_so_far))
     if debug:
       logging.info("Return samples %s", str(return_samples))
   return return_samples, complete
