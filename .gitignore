@@ -12,3 +12,4 @@ tmp/
 venv/
 .vscode/
 _temp
+jax_cache/
